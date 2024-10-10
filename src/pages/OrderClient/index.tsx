@@ -5,47 +5,30 @@ import Navbar from "components/Navbar";
 import Title from "components/Title";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetAllUser } from "services/UserService";
-import { formatIsActive } from "utils/Helpers";
+import { GetAllOrder } from "services/OrderServices";
+import { formatDate } from "utils/Helpers";
 
-interface User {
-  id: number;
-  name: string;
-}
-
-// nombre de usuario, tienda, estado
-
-// const UserContent: User[] = [
-//   {
-//     id: 11,
-//     code: "1111",
-//     username: "user1",
-//     store: "1111",
-//     active: true,
-//   },
-// ];
-
-const UserPage = () => {
+const OrderClient = () => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<User[]>([]);
+  const [orders, setOrders] = useState<purchaseOrder[]>([]);
 
   const handleOnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-    navigate(`/dashboard/Users/${id}`);
+    navigate(`/dashboard/orders/${id}`);
   };
 
-  const handleAddStore = () => {
-    navigate("/dashboard/Users/create");
+  const handleAddOrder = () => {
+    navigate("/dashboard/orders/new-order");
   };
 
   useEffect(() => {
-    GetAllUser()
+    GetAllOrder()
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data.content.users);
-        setUser(data.content.users);
+        console.log(data.content);
+        setOrders(data.content);
       });
   }, []);
 
@@ -54,19 +37,22 @@ const UserPage = () => {
       <Navbar />
       <Container direction='column'>
         <Container position='right'>
-          <AddButton title='Agregar Usuario' onClick={handleAddStore} />
+          <AddButton title='Agregar Orden' onClick={handleAddOrder} />
         </Container>
         <Container direction='row' wrap='wrap'>
-          {user.map((user) => {
+          {orders.map((order) => {
             return (
               <CardListView
-                title={`Usuario: ${user.id}`}
-                key={user.id}
+                titleFirstButton='Detalle'
+                title={`Orden: ${order.idPurchaseOrder}`}
+                key={order.idPurchaseOrder}
                 onClick={(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-                  handleOnClick(evt, user.id)
+                  handleOnClick(evt, order.idPurchaseOrder)
                 }
               >
-                <Title>Usuario: {user.name}</Title>
+                <Title>Estado: {order.state}</Title>
+                <Title>Observaciones: {order.observations}</Title>
+                <Title>Solicitud: {formatDate(order.requestDate)}</Title>
               </CardListView>
             );
           })}
@@ -76,4 +62,4 @@ const UserPage = () => {
   );
 };
 
-export default UserPage;
+export default OrderClient;

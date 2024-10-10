@@ -1,7 +1,11 @@
+import AddButton from "components/AddButton";
 import CardListView from "components/CardListView";
 import Container from "components/Container";
 import Navbar from "components/Navbar";
+import Title from "components/Title";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GetAllStock } from "services/StockServices";
 
 interface Product {
   name: string;
@@ -11,15 +15,15 @@ interface Product {
 }
 
 interface Stock {
+  code: string;
   codeStore: string;
   quantity: number;
   product: Product;
 }
 
-// tienda (código), producto (nombre, código, talle, color) y cantidad
-
 const StockContent: Stock[] = [
   {
+    code: "ABC123",
     codeStore: "1111",
     quantity: 15,
     product: {
@@ -34,32 +38,53 @@ const StockContent: Stock[] = [
 const StockPage = () => {
   const navigate = useNavigate();
 
+  const [stock, setStock] = useState<Stock[]>([]);
+
   const handleOnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     navigate(`/dashboard/Stocks/${id}`);
   };
 
+  const handleAddStore = () => {
+    navigate("/dashboard/Stocks/create");
+  };
+
+  useEffect(() => {
+    GetAllStock()
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setStock(data.content.stocks);
+      });
+  }, []);
+
   return (
     <div>
       <Navbar />
-      <Container direction='row' wrap='wrap'>
-        {StockContent.map((stock) => {
-          return (
-            <CardListView
-              title={`Stock: ${stock.codeStore}`}
-              key={stock.codeStore}
-              onClick={(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-                handleOnClick(evt, stock.codeStore)
-              }
-            >
-              <h2>{stock.codeStore}</h2>
-              <h2>{stock.product.code}</h2>
-              <h2>{stock.product.name}</h2>
-              <h2>{stock.product.size}</h2>
-              <h2>{stock.product.color}</h2>
-              <h2>{stock.quantity}</h2>
-            </CardListView>
-          );
-        })}
+      <Container direction='column'>
+        <Container position='right'>
+          <AddButton title='Agregar Stock' onClick={handleAddStore} />
+        </Container>
+        <Container direction='row' wrap='wrap'>
+          {stock.map((stock) => {
+            return (
+              <CardListView
+                title={`Stock: ${stock.code}`}
+                key={stock.codeStore}
+                onClick={(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+                  handleOnClick(evt, stock.code)
+                }
+              >
+                <Title>Tienda: {stock.codeStore}</Title>
+                <Title>Producto: {stock.product.code}</Title>
+                <Title>Nombre: {stock.product.name}</Title>
+                <Title>Tamaño: {stock.product.size}</Title>
+                <Title>Color: {stock.product.color}</Title>
+                <Title>Cantidad: {stock.quantity}</Title>
+              </CardListView>
+            );
+          })}
+        </Container>
       </Container>
     </div>
   );

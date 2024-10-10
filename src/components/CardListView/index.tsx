@@ -4,17 +4,35 @@ interface CardListViewProps {
   title: string;
   children: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  titleFirstButton?: string;
+  titleSecondButton?: string;
+  viewFirstButton?: boolean;
+  viewSecondButton?: boolean;
 }
 
-const CardListView = ({ title, children, onClick }: CardListViewProps) => {
+const CardListView = ({
+  title,
+  children,
+  onClick,
+  titleFirstButton = "Modificar",
+  titleSecondButton = "Eliminar",
+  viewFirstButton = true,
+  viewSecondButton = true,
+}: CardListViewProps) => {
   return (
     <div className={styles.listContent}>
       <h2>{title}</h2>
       <div className={styles.listActions}>
-        <button onClick={onClick} className={`${styles.listActionsButton} ${styles.update}`}>
-          Modificar
-        </button>
-        <button className={`${styles.listActionsButton} ${styles.delete}`}>Eliminar</button>
+        {viewFirstButton && (
+          <button onClick={onClick} className={`${styles.listActionsButton} ${styles.update}`}>
+            {titleFirstButton}
+          </button>
+        )}
+        {viewSecondButton && (
+          <button className={`${styles.listActionsButton} ${styles.delete}`}>
+            {titleSecondButton}
+          </button>
+        )}
       </div>
       <span className={styles.listLineBreak}></span>
       {children}

@@ -1,33 +1,24 @@
+import Container from "components/Container";
 import AddButton from "components/AddButton";
 import CardListView from "components/CardListView";
-import Container from "components/Container";
-import Navbar from "components/Navbar";
 import Title from "components/Title";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetAllProduct, GetAllProductByState } from "services/ProductServices";
-import { formatIsActive } from "utils/Helpers";
+import { useEffect, useState } from "react";
 
-//  nombre, código, talle, color
+import { GetAllProductByState } from "services/ProductServices";
+import NavbarProvider from "components/NavbarProvider";
 
-const ProductContent: Product[] = [
-  {
-    code: "1111",
-    active: true,
-    color: "red",
-    name: "producto 1",
-    size: "M",
-  },
-  {
-    code: "2222",
-    active: true,
-    color: "red",
-    name: "producto 2",
-    size: "S",
-  },
-];
+import styles from "./ProductProvider.module.css";
 
-const ProductPage = () => {
+interface Product {
+  name: string;
+  code: string;
+  size: string;
+  color: string;
+  active: boolean;
+}
+
+const ProductProvider = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product[]>([]);
@@ -41,7 +32,7 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    GetAllProductByState(true)
+    GetAllProductByState(false)
       .then((response) => {
         return response.json();
       })
@@ -52,7 +43,7 @@ const ProductPage = () => {
 
   return (
     <div>
-      <Navbar />
+      <NavbarProvider />
       <Container direction='column'>
         <Container position='right'>
           <AddButton title='Agregar Producto' onClick={handleAddStore} />
@@ -71,7 +62,6 @@ const ProductPage = () => {
                 <Title>Nombre: {product.name}</Title>
                 <Title>Color: {product.color}</Title>
                 <Title>Tamaño: {product.size}</Title>
-                <Title>Activo: {formatIsActive(product.active)}</Title>
               </CardListView>
             );
           })}
@@ -81,4 +71,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default ProductProvider;

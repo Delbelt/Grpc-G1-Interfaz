@@ -1,17 +1,11 @@
 import Container from "components/Container";
-import styles from "./Navbar.module.css";
-import { modules } from "utils/modules";
 import useNavigateModule from "hooks/useNavigateModule";
+import { modulesProvider } from "utils/modules";
 
-const Navbar = () => {
-  const { handleNavigate, loginNavigate, handleNavigateProvider, handleNavigateDashboard } =
-    useNavigateModule();
+import styles from "./Navbar.module.css";
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-
-    loginNavigate();
-  };
+const NavbarProvider = () => {
+  const { handleNavigateProvider, handleNavigateDashboard } = useNavigateModule();
 
   return (
     <Container position='right' classname={styles.navbarContainer}>
@@ -26,19 +20,18 @@ const Navbar = () => {
         </div>
       </div>
 
-      {modules.map((module) => {
+      {modulesProvider.map((module) => {
         return (
-          <button className={styles.navbarPages} onClick={() => handleNavigate(module.module)}>
+          <button
+            className={styles.navbarPages}
+            onClick={() => handleNavigateProvider(module.module)}
+          >
             {module.name}
           </button>
         );
       })}
-
-      <button className={styles.navbarLogout} onClick={handleLogout}>
-        Salir
-      </button>
     </Container>
   );
 };
 
-export default Navbar;
+export default NavbarProvider;

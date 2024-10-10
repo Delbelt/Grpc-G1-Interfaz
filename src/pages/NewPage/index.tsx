@@ -5,35 +5,15 @@ import Navbar from "components/Navbar";
 import Title from "components/Title";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetAllProduct, GetAllProductByState } from "services/ProductServices";
-import { formatIsActive } from "utils/Helpers";
+import { GetAllProductByState } from "services/ProductServices";
 
-//  nombre, código, talle, color
-
-const ProductContent: Product[] = [
-  {
-    code: "1111",
-    active: true,
-    color: "red",
-    name: "producto 1",
-    size: "M",
-  },
-  {
-    code: "2222",
-    active: true,
-    color: "red",
-    name: "producto 2",
-    size: "S",
-  },
-];
-
-const ProductPage = () => {
+const NewPage = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product[]>([]);
 
   const handleOnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
-    navigate(`/dashboard/Products/${id}`);
+    console.log("SE AGREGO:", id);
   };
 
   const handleAddStore = () => {
@@ -41,7 +21,7 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    GetAllProductByState(true)
+    GetAllProductByState(false)
       .then((response) => {
         return response.json();
       })
@@ -55,13 +35,15 @@ const ProductPage = () => {
       <Navbar />
       <Container direction='column'>
         <Container position='right'>
-          <AddButton title='Agregar Producto' onClick={handleAddStore} />
+          <AddButton title='Agregar Novedad' onClick={handleAddStore} />
         </Container>
         <Container direction='row' wrap='wrap'>
           {product.map((product) => {
             return (
               <CardListView
-                title={`Producto: ${product.code}`}
+                title={`Novedad: ${product.code}`}
+                titleFirstButton='Agregar'
+                viewSecondButton={false}
                 key={product.code}
                 onClick={(evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
                   handleOnClick(evt, product.code)
@@ -71,7 +53,6 @@ const ProductPage = () => {
                 <Title>Nombre: {product.name}</Title>
                 <Title>Color: {product.color}</Title>
                 <Title>Tamaño: {product.size}</Title>
-                <Title>Activo: {formatIsActive(product.active)}</Title>
               </CardListView>
             );
           })}
@@ -81,4 +62,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default NewPage;

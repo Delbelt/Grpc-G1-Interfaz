@@ -18,7 +18,7 @@ const Home = () => {
         <Container classname={styles.homeContainer}>
           {modules.map((module) => {
             return (
-              <CardModule module={module.module} onClick={() => handleNavigate(module.module)} />
+              <CardModule module={module.name} onClick={() => handleNavigate(module.module)} />
             );
           })}
         </Container>
